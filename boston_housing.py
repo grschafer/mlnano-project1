@@ -31,12 +31,19 @@ def explore_city_data(city_data):
 
     # Please calculate the following values using the Numpy library
     # Size of data (number of houses)?
+    print 'Number of houses:', housing_features.shape[0]
     # Number of features?
+    print 'Number of features:', housing_features.shape[1]
     # Minimum price?
+    print 'Minimum price:', housing_prices.min()
     # Maximum price?
+    print 'Maximum price:', housing_prices.max()
     # Calculate mean price?
+    print 'Mean price:', housing_prices.mean()
     # Calculate median price?
+    print 'Median price:', np.median(housing_prices)
     # Calculate standard deviation?
+    print 'Price standard deviation:', housing_prices.std()
 
 
 def performance_metric(label, prediction):
@@ -47,6 +54,7 @@ def performance_metric(label, prediction):
     ###################################
 
     # http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics
+    import ipdb; ipdb.set_trace()
     pass
 
 
