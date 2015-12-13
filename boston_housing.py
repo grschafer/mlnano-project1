@@ -14,6 +14,10 @@ from sklearn.metrics import mean_squared_error, make_scorer
 from sklearn import grid_search
 
 
+# added to produce Figure 2 in the report
+fully_trained_error = np.zeros((10, 10))
+
+
 def load_data():
     """Load the Boston dataset."""
 
@@ -74,7 +78,7 @@ def split_data(city_data):
     return X_train, y_train, X_test, y_test
 
 
-def learning_curve(depth, X_train, y_train, X_test, y_test):
+def learning_curve(depth, X_train, y_train, X_test, y_test, iteration=None):
     """Calculate the performance of the model after a set of training data."""
 
     # We will vary the training set size so that we have 50 different sizes
@@ -97,19 +101,25 @@ def learning_curve(depth, X_train, y_train, X_test, y_test):
 
 
     # Plot learning curve graph
-    learning_curve_graph(sizes, train_err, test_err)
+    learning_curve_graph(depth, sizes, train_err, test_err)
+
+    # added to produce figure 2
+    if iteration is not None:
+        print 'Final error at max_depth={}: {}'.format(depth, test_err[-1])
+        fully_trained_error[depth - 1][iteration] = test_err[-1]
 
 
-def learning_curve_graph(sizes, train_err, test_err):
+def learning_curve_graph(depth, sizes, train_err, test_err):
     """Plot training and test error as a function of the training size."""
 
     pl.figure()
-    pl.title('Decision Trees: Performance vs Training Size')
+    pl.title('Decision Trees: Performance vs Training Size with Max Depth {}'.format(depth))
     pl.plot(sizes, test_err, lw=2, label = 'test error')
     pl.plot(sizes, train_err, lw=2, label = 'training error')
     pl.legend()
     pl.xlabel('Training Size')
     pl.ylabel('Error')
+    #pl.savefig('learning_curve_depth{}.png'.format(depth))
     pl.show()
 
 
@@ -135,6 +145,7 @@ def model_complexity(X_train, y_train, X_test, y_test):
 
         # Find the performance on the testing set
         test_err[i] = performance_metric(y_test, regressor.predict(X_test))
+        #print d, ",", test_err[i]
 
     # Plot the model complexity graph
     model_complexity_graph(max_depth, train_err, test_err)
@@ -150,6 +161,7 @@ def model_complexity_graph(max_depth, train_err, test_err):
     pl.legend()
     pl.xlabel('Max Depth')
     pl.ylabel('Error')
+    #pl.savefig('model_complexity.png')
     pl.show()
 
 
@@ -206,8 +218,11 @@ def main():
 
     # Learning Curve Graphs
     max_depths = [1,2,3,4,5,6,7,8,9,10]
+    #for i in range(fully_trained_error.shape[0]):
     for max_depth in max_depths:
         learning_curve(max_depth, X_train, y_train, X_test, y_test)
+    #print fully_trained_error
+    #print 'Mean test error when fully-trained at different max_depth values:', np.mean(fully_trained_error, 1)
 
     # Model Complexity Graph
     model_complexity(X_train, y_train, X_test, y_test)
